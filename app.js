@@ -61,6 +61,18 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function formatCellValue(value) {
+  if (value === null || value === undefined || value === '') return '';
+  const str = String(value).trim();
+  if (/^-?\d+(\.\d+)?$/.test(str)) {
+    const num = Number(str);
+    if (!Number.isNaN(num)) {
+      return String(Math.round(num));
+    }
+  }
+  return value;
+}
+
 function showApp() {
   loginScreen.classList.add('hidden');
   appShell.classList.remove('hidden');
@@ -289,7 +301,7 @@ function renderResults() {
     tbody.innerHTML = `<tr><td class="empty" colspan="${Math.max(columns.length, 1)}">No matching records found.</td></tr>`;
   } else {
     tbody.innerHTML = rows.slice(0, 250).map((row) => {
-      const values = columns.map((column) => row[column] || '');
+      const values = columns.map((column) => formatCellValue(row[column] || ''));
       return `<tr>${values.map((value) => `<td>${escapeHtml(value)}</td>`).join('')}</tr>`;
     }).join('');
   }
